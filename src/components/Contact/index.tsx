@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import Swal from "sweetalert2";
 
 const Contact = () => {
   const [notification, setNotification] = useState('');
@@ -31,9 +32,44 @@ const Contact = () => {
 
   const submitEnquiryForm = (gReCaptchaToken : string) => {
     async function goAsync() {
-      console.log("gReCaptchaToken", gReCaptchaToken);
+      console.log("gReCaptchaToken", "hehe mau ngapain hayo");
     }
-    goAsync().then(() => {}); // suppress typescript error
+    goAsync().then(() => {
+      axios
+        .post("/api/contact", {
+          name,
+          email,
+          message,
+          kecamatan,
+          desa,
+          alamat,
+          phone: phoneNumber,
+          gReCaptchaToken,
+        })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            title: "Pesan berhasil dikirim",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        })
+        .catch((error) => {
+          Swal.fire({
+            icon: "error",
+            title: "Ada gangguaan saat mengirim pesan",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        });
+    }); // suppress typescript error
   };
 
   
