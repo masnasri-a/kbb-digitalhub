@@ -53,9 +53,9 @@ const Contact = () => {
             showConfirmButton: false,
             timer: 1500,
           });
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
+          // setTimeout(() => {
+          //   window.location.reload();
+          // }, 1500);
         })
         .catch((error) => {
           Swal.fire({
@@ -65,9 +65,9 @@ const Contact = () => {
             timer: 1500,
           });
           
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
+          // setTimeout(() => {
+          //   window.location.reload();
+          // }, 1500);
         });
     }); // suppress typescript error
   };
