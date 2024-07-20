@@ -5,32 +5,35 @@ import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import Swal from "sweetalert2";
 
 const Contact = () => {
-  const [notification, setNotification] = useState('');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [kecamatan, setKecamatan] = useState('');
-  const [desa, setDesa] = useState('');
-  const [alamat, setAlamat] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [notification, setNotification] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [kecamatan, setKecamatan] = useState("");
+  const [desa, setDesa] = useState("");
+  const [alamat, setAlamat] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   const handleSubmitForm = function (e: any) {
+    setIsLoading(true);
     e.preventDefault();
     if (!executeRecaptcha) {
       console.log("Execute recaptcha not available yet");
       setNotification(
-        "Execute recaptcha not available yet likely meaning key not recaptcha key not set"
+        "Execute recaptcha not available yet likely meaning key not recaptcha key not set",
       );
       return;
     }
-    executeRecaptcha("enquiryFormSubmit").then((gReCaptchaToken) => {
-      submitEnquiryForm(gReCaptchaToken);
-    });
+      executeRecaptcha("enquiryFormSubmit").then((gReCaptchaToken) => {
+        submitEnquiryForm(gReCaptchaToken);
+        setIsLoading(false);
+      });  
   };
 
-  const submitEnquiryForm = (gReCaptchaToken : string) => {
+  const submitEnquiryForm = (gReCaptchaToken: string) => {
     async function goAsync() {
       console.log("gReCaptchaToken", "hehe mau ngapain hayo");
     }
@@ -39,7 +42,7 @@ const Contact = () => {
         .post("/api/contact", {
           name,
           email,
-          message,
+          pesan: message,
           kecamatan,
           desa,
           alamat,
@@ -53,8 +56,15 @@ const Contact = () => {
             showConfirmButton: false,
             timer: 1500,
           });
+          setAlamat("");
+          setEmail("");
+          setMessage("");
+          setName("");
+          setPhoneNumber("");
+          setKecamatan("");
+          setDesa("");
           setTimeout(() => {
-            window.location.reload();
+            window.location.href = "/";
           }, 2500);
         })
         .catch((error) => {
@@ -64,15 +74,21 @@ const Contact = () => {
             showConfirmButton: false,
             timer: 1500,
           });
-          
+          setAlamat("");
+          setEmail("");
+          setMessage("");
+          setName("");
+          setPhoneNumber("");
+          setKecamatan("");
+          setDesa("");
+
           setTimeout(() => {
-            window.location.reload();
+            window.location.href = "/";
           }, 2500);
         });
     }); // suppress typescript error
   };
 
-  
   return (
     <section id="contact" className="overflow-hidden py-16 md:py-20 lg:py-28">
       <div className="container">
@@ -87,7 +103,8 @@ const Contact = () => {
                 Pendaftaran
               </h2>
               <p className="mb-12 text-base font-medium text-body-color">
-                Silahkan isi form pendaftaran berikut untuk mendaftar di Bandung Barat Digital Hub
+                Silahkan isi form pendaftaran berikut untuk mendaftar di Bandung
+                Barat Digital Hub
               </p>
               <form onSubmit={handleSubmitForm}>
                 <div className="-mx-4 flex flex-wrap">
@@ -155,7 +172,7 @@ const Contact = () => {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="w-full px-4 md:w-1/2">
                     <div className="mb-8">
                       <label
@@ -207,8 +224,12 @@ const Contact = () => {
                     </div>
                   </div>
                   <div className="w-full px-4">
-                    <button type="submit" className="rounded-sm bg-primary px-9 py-4 text-base font-medium text-white shadow-submit duration-300 hover:bg-primary/90 dark:shadow-submit-dark">
-                      Kirim
+                    <button
+                      disabled={isLoading}
+                      type="submit"
+                      className="rounded-sm bg-primary px-9 py-4 text-base font-medium text-white shadow-submit duration-300 hover:bg-primary/90 dark:shadow-submit-dark"
+                    >
+                      {isLoading ? "Loading..." : "Kirim"}
                     </button>
                   </div>
                 </div>
